@@ -11,6 +11,7 @@ import {
 
 import LandingScreen from './app/components/LandingScreen/LandingScreen';
 import SplashScreen from './app/components/SplashScreen/SplashScreen';
+import SelectLanguage from './app/components/SelectLanguage/SelectLanguage';
 
 export default class App extends Component<{}> {
   
@@ -25,7 +26,7 @@ export default class App extends Component<{}> {
   render() {
 
     return (
-      <SplashScreen></SplashScreen>
+      <SelectLanguage></SelectLanguage>
     );
   }
 }
