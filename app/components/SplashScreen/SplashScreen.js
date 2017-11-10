@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     View,
-    Text
+    Text,
+    Image
 } from 'react-native';
 
 export default class SplashScreen extends Component<{}> {
@@ -20,8 +21,12 @@ export default class SplashScreen extends Component<{}> {
         return (
             <View style={styles.container}>
                 <View style={styles.logoContainer}>
-                    
-                    <Text style={styles.logoText}>Blabber</Text>
+                    <View style={styles.logoImgCont}>
+                        <Image source={require('../../images/ble.png')} ></Image>
+                    </View>
+                    <View style={styles.logoHeadingContainer}>
+                        <Text style={styles.logoText}>Blabber</Text>
+                    </View>
                 </View>
                 <View style={styles.footerContainer}>
                     <Text style={styles.footerText}>Developed by Saurabh Barthwal</Text>
@@ -41,10 +46,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center'
     },
+    logoImgCont: {
+        alignItems: 'center'
+    },
     logoText: {
         fontSize: 43,
         fontWeight: 'bold',
-        color: '#fff',
+        color: '#FF4D4D',
         opacity: 0.9
 
     },
