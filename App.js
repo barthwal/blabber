@@ -12,6 +12,7 @@ import {
 import LandingScreen from './app/components/LandingScreen/LandingScreen';
 import SplashScreen from './app/components/SplashScreen/SplashScreen';
 import SelectLanguage from './app/components/SelectLanguage/SelectLanguage';
+import Exp from './app/components/Exp/Exp';
 
 export default class App extends Component<{}> {
   
