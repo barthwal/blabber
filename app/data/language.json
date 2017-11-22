@@ -1,0 +1,49 @@
+[
+	{"key": "en", "value": "Canadian English", "language": "en-CA"},
+	{"key": "en", "value": "British English", "language": "en-GB"},
+	{"key": "en", "value": "Indian English", "language": "en-IN"},
+	
+	{"key": "en", "value": "English", "language": "en-US"},
+	{"key": "hi", "value": "Hindi, India", "language": "hi-IN"},
+	{"key": "pa", "value": "Punjabi, Indin", "language": "pa-IN"},
+	{"key": "gu", "value": "Gujarati, Indin", "language": "gu-IN"},
+	{"key": "sa", "value": "Sanskrit, Indin", "language": "sa-IN"},
+	{"key": "kn", "value": "Kannada, India", "language": "kn-IN"},
+	{"key": "kok", "value": "Konkani, India", "language": "kok-IN"},
+	/*{"key": "bh", "value": "Bihari, India", "language": ""},*/
+	{"key": "mr", "value": "Marathi, India", "language": "mr-IN"},
+	{"key": "ta", "value": "Tamil, India", "language": "ta-IN"},
+	{"key": "te", "value": "Telugu, India", "language": "te-IN"},
+	{"key": "bn", "value": "Bengali, India", "language": "bn-IN"},
+	{"key": "bn", "value": "Bangla (Bangladesh)", "language": "bn-BD"},
+
+
+	{"key": "zh", "value": "Chinese, China", "language": "zh-CN"},
+	{"key": "fr", "value": "French, French", "language": "fr-FR"},
+	/*{"key": "ks", "value": "Kashmiri"},*/
+	{"key": "ur", "value": "Urdu, Pakistan", "language": "ur-PK"},
+	{"key": "ja", "value": "Japanese", "language": "ja-JP"},
+	{"key": "ko", "value": "Korean (Korea)", "language": "ko-KR"},
+	{"key": "de", "value": "German", "language": "de-DE"},
+	{"key": "ru", "value": "Russian (Russia)", "language": "ru-RU"},
+	{"key": "it", "value": "Italian", "language": "it-IT"},
+	{"key": "in", "value": "Indonesian", "language": "in-ID"},
+	{"key": "fi", "value": "Finnish (Finland)", "language": "fi-FI"},
+	{"key": "nl", "value": "Dutch (Netherlands)", "language": "nl-NL"},
+	{"key": "pt", "value": "Brazilian Portuguese", "language": "pt-BR"},
+	{"key": "th", "value": "Thai", "language": "th-TH"}
+
+	
+];
+
+
+
+
+
+
+
+
+
+
+
+

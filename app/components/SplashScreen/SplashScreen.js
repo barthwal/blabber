@@ -18,8 +18,11 @@ export default class SplashScreen extends Component<{}> {
 
 
     render() {
+
+        let isVissible = (this.props.display == "yes")? "flex" :  "none";
+
         return (
-            <View style={styles.container}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#122330', display: isVissible}}>
                 <View style={styles.logoContainer}>
                     <View style={styles.logoImgCont}>
                         <Image source={require('../../images/ble.png')} ></Image>

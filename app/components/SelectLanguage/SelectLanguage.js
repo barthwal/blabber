@@ -8,14 +8,18 @@ import {
     View,
     Text,
     Button,
-    Picker
+    Picker,
+
+    WebView
 } from 'react-native';
 
 import Voice from 'react-native-voice';
 import Tts from 'react-native-tts';
 
+declare var document: any;
 
-const languageList = [{"key": "en", "value": "English"}, {"key": "hi", "value": "Hindi"}, {"key": "bn", "value": "Bengali"}, {"key": "bh", "value": "Bihari"}, {"key": "zh", "value": "Chinese"}, {"key": "fr", "value": "French"}, {"key": "ks", "value": "Kashmiri"}, {"key": "ur", "value": "Urdu"}];
+
+const languageList = require('../../data/language.json');
 
 
 
@@ -28,12 +32,12 @@ export default class SelectLanguage extends Component<{}> {
     constructor(props) {
         super(props);
 
-        this.state = {myLanguage : 'en', yourLanguage : 'hi', voiceData: ['hello', 'hello world','hello', 'hello world', 'pick you'], translateData: [], butonText: 'Listen me', showLoader: false, isformShow: true, w: 0, h: 0};
+        this.state = {myLanguage : 'en', yourLanguage : 'hi||hi-IN', voiceData: [], translateData: [], butonText: 'Listen me', showLoader: false, isformShow: true, w: 0, h: 0};
 
     }
 
     reset() {
-        this.setState({voiceData: ['hello', 'hello world','hello', 'hello world', 'pick you'], translateData: [], butonText: 'Listen me', showLoader: false, isformShow: false, w: 0, h: 0});
+        this.setState({voiceData: ['hello', 'hello world','hello', 'hello world', 'pick you'], translateData: [], butonText: 'Listen me',showLoader: false, isformShow: false, w: 0, h: 0});
     }
 
     componentDidMount() {
@@ -43,6 +47,7 @@ export default class SelectLanguage extends Component<{}> {
         Voice.onSpeechStart = this.onSpeechStartHandler.bind(this);
         Voice.onSpeechEnd = this.onSpeechEndHandler.bind(this);
         Voice.onSpeechResults = this.onSpeechResultsHandler.bind(this);
+
     }
 
     // start voice to text convert
@@ -89,9 +94,20 @@ export default class SelectLanguage extends Component<{}> {
     _onCorrectTextSelect (e, text) {
         this.setState({voiceData: [text]});
 
+        let yourLanguage = this.state.yourLanguage.split('||')[0];
+
         //let url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q="+text;
-        let url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl="+this.state.myLanguage+"&tl="+this.state.yourLanguage+"&dt=t&q="+text;
-        fetch(url, {
+        
+        //http://mymemory.translated.net/api/get?q=hello&langpair=en|pa    https://stackoverflow.com/questions/26672236/how-to-translate-text-from-one-language-to-another-language-android
+
+        let url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl="+this.state.myLanguage+"&tl="+yourLanguage+"&dt=t&q="+(text);
+
+        this.refs.myWebViewText.postMessage(url);
+
+
+        
+
+        /*fetch(url, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -100,14 +116,33 @@ export default class SelectLanguage extends Component<{}> {
             body: null
         }).then((response) => response.json())
         .then((responseJson) => {
+            console.log('responseJson: ', responseJson);
             this._nowTranslateMyConvertedText(responseJson[0][0][0]);
         })
         .catch((error) => {
             console.error(error);
-        });
+        });*/
+
+        
+
+        
 
         //https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q=Hello%20world
-      }
+    }
+
+    fetchTranslateDataResponse(responseJson) {
+        if(typeof responseJson == "string")
+            responseJson = JSON.parse(responseJson);
+        this._nowTranslateMyConvertedText(responseJson[0][0][0]);
+    }
+
+    fetchTranslateVoiceResponse(responseJson) {
+        console.log('responseJson: ', responseJson);
+
+        /*if(typeof responseJson == "string")
+            responseJson = JSON.parse(responseJson);
+        this._nowTranslateMyConvertedText(responseJson[0][0][0]);*/
+    }
     // end google translate api
 
 
@@ -118,10 +153,51 @@ export default class SelectLanguage extends Component<{}> {
         let voiceText = responseJson;
         this.setState({translateData: [voiceText]});
 
-        Tts.voices().then(voices => console.log(voices));
+        let yourLanguage = this.state.yourLanguage.split('||')[1];
+        var yourLanguageSupport = false;
+        let cc = [];
 
-        Tts.setDefaultLanguage("hi-IN");
-        Tts.speak(voiceText);
+        Tts.voices().then((voices) => {
+            for(let i=0; i < voices.length; i++) {
+                let row = voices[i];
+                //console.log(row.language, yourLanguage, row.language == yourLanguage);
+
+                if(cc.indexOf(voices[i]) < 0)
+                    cc.push(voices[i]);
+
+                if(row.language == yourLanguage) {
+                    yourLanguageSupport = true;
+                }
+            }
+            
+            //console.log(JSON.stringify(voices));
+            //console.log(JSON.stringify(cc));
+
+
+            console.log("yourLanguageSupport: ", yourLanguageSupport, yourLanguage);
+
+            if(yourLanguageSupport) {
+                Tts.setDefaultLanguage(yourLanguage);
+                Tts.speak(voiceText);
+            } else {
+                /*Tts.setDefaultLanguage('en-US');
+                Tts.speak("You need to download language!");*/
+
+                let yourLanguage = this.state.yourLanguage.split('||')[0];
+
+                //let url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q="+text;
+                let url = "http://translate.google.com/translate_tts?ie=UTF-8&sl="+this.state.myLanguage+"&tl="+yourLanguage+"&dt=t&q="+(text);
+
+                this.refs.myWebViewText.postMessage(url);
+                myWebViewVoice
+
+                //http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=hello%20world&tl=En-gb
+            }
+
+            
+        });
+
+
     }
     // end text to speech
 
@@ -140,6 +216,7 @@ export default class SelectLanguage extends Component<{}> {
     }
 
     onListenNavButtonPress() {
+        this.reset();
         this.setState({isformShow: true});
         this.onListenButtonPress();
     }
@@ -148,13 +225,87 @@ export default class SelectLanguage extends Component<{}> {
 
 
     render() {
-        let pickerListComponent = languageList.map((lang, index) => {
-            return <Picker.Item key={'lang'+index} label={lang.value} value={lang.key} />
+        let myLangPickerListComponent = languageList.map((lang, index) => {
+            return <Picker.Item key={'mylang'+index} label={lang.value} value={lang.key} />
+        });
+        let yourLangPickerListComponent = languageList.map((lang, index) => {
+            return <Picker.Item key={'yourlang'+index} label={lang.value} value={lang.key+"||"+lang.language} />
         });
 
+        let isVissible = (this.props.display == "yes")? "flex" :  "none";
+        let html = `
+            <div id="myContent">
+                This is my name
+            </div>
+
+            <script>
+                document.addEventListener('message', function(e) {
+                    var request = new XMLHttpRequest();
+                    request.onreadystatechange = function(e) {
+                      if (request.readyState !== 4) {
+                        return;
+                      }
+
+                      if (request.status === 200) {
+                        console.log(request.responseText);
+                        document.querySelector('#myContent').innerHTML = request.responseText;
+                        postMessage(request.responseText);
+                      } else {
+                        console.warn('error');
+                      }
+                    };
+                    url= e.data;
+                    document.querySelector('#myContent').innerHTML = e.data;
+                    request.open('GET', url);
+                    request.send();
+                });
+            </script>
+        `;
+        let htmlVoice = `
+            <div id="myContent">
+                Voice
+            </div>
+
+            <script>
+                document.addEventListener('message', function(e) {
+                    var request = new XMLHttpRequest();
+                    request.onreadystatechange = function(e) {
+                      if (request.readyState !== 4) {
+                        return;
+                      }
+
+                      if (request.status === 200) {
+                        console.log(request.responseText);
+                        document.querySelector('#myContent').innerHTML = request.responseText;
+                        postMessage(request.responseText);
+                      } else {
+                        console.warn('error');
+                      }
+                    };
+                    url= e.data;
+                    document.querySelector('#myContent').innerHTML = e.data;
+                    request.open('GET', url);
+                    request.send();
+                });
+            </script>
+        `;
 
         return (
-            <View style={styles.container}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'#fff', display: isVissible}}>
+                <View style={{width: 0, height: 0}}>
+                    <WebView
+                        html={html}
+                        style={{width: 0, height: 0}}
+                        ref="myWebViewText"
+                        onMessage={(event)=> {this.fetchTranslateDataResponse(event.nativeEvent.data)}}
+                      />
+                      <WebView
+                        html={htmlVoice}
+                        style={{width: 0, height: 0}}
+                        ref="myWebViewVoice"
+                        onMessage={(event)=> {this.fetchTranslateVoiceResponse(event.nativeEvent.data)}}
+                      />
+                </View>
                 <View style={{display: (this.state.isformShow == true)? 'flex' : 'none'}}>
                     <View style={styles.rowContainer}>
                         <View style={styles.textView}>
@@ -165,7 +316,7 @@ export default class SelectLanguage extends Component<{}> {
                                 style={styles.pickerElement} 
                                 selectedValue={this.state.myLanguage} 
                                 onValueChange={(itemValue, itemIndex) => this.setState({myLanguage: itemValue})}>
-                                {pickerListComponent}
+                                {myLangPickerListComponent}
                             </Picker>
                         </View>
                     </View>
@@ -178,7 +329,7 @@ export default class SelectLanguage extends Component<{}> {
                                 style={styles.pickerElement} 
                                 selectedValue={this.state.yourLanguage} 
                                 onValueChange={(itemValue, itemIndex) => this.setState({yourLanguage: itemValue})}>
-                                {pickerListComponent}
+                                {yourLangPickerListComponent}
                             </Picker>
                         </View>
                     </View>
